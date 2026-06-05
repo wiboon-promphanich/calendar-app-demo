@@ -61,7 +61,7 @@
   function renderCalendar() {
     var year = viewDate.getFullYear();
     var month = viewDate.getMonth();
-    monthTitle.textContent = viewDate.toLocaleString('en-US', { month: 'long' }) + ' ' + year;
+    monthTitle.textContent = year + ' ' + viewDate.toLocaleString('en-US', { month: 'long' });
 
     // Start on the Sunday on/before the 1st; render 42 cells (6 weeks).
     var start = new Date(year, month, 1);
@@ -71,11 +71,11 @@
     grid.innerHTML = '';
     for (var i = 0; i < 42; i++) {
       var cellDate = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
-      grid.appendChild(buildCell(cellDate, month, today));
+      grid.appendChild(buildCell(cellDate, month, today, i));
     }
   }
 
-  function buildCell(cellDate, viewMonth, today) {
+  function buildCell(cellDate, viewMonth, today, index) {
     var iso = toISODate(cellDate);
     var cell = document.createElement('div');
     cell.className = 'cell';
@@ -85,7 +85,12 @@
 
     var num = document.createElement('div');
     num.className = 'day-number';
-    num.textContent = cellDate.getDate();
+    // Label the first cell and the 1st of each month with its month, e.g. "Jun 1".
+    if (cellDate.getDate() === 1 || index === 0) {
+      num.textContent = cellDate.toLocaleString('en-US', { month: 'short' }) + ' ' + cellDate.getDate();
+    } else {
+      num.textContent = cellDate.getDate();
+    }
     cell.appendChild(num);
 
     var list = document.createElement('div');
